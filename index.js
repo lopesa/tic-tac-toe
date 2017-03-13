@@ -1,3 +1,12 @@
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+
+
 var Board = function() {
   return [
     [' ', '|', ' ', '|', ' '],
@@ -24,8 +33,16 @@ var wins = [
   [[5,5], [3,3], [1,5]]
 ];
 
-var printBoard = function() {
-  board.forEach(line => {
+
+
+var Game = function() {
+  this.board = Board();
+  this.players = [['player1', 'x'], ['player2', 'o']]
+  this.currentTurn = this.players[0];
+}
+
+Game.prototype.printBoard = function() {
+  this.board.forEach(line => {
 
     line.forEach(space => {
       process.stdout.write(space);
@@ -34,22 +51,26 @@ var printBoard = function() {
   })
 }
 
-var Game = function() {
-  this.board = Board();
-  this.players = [['player1', 'x'], ['player2', 'o']]
-  this.turn = this.players[0];
-}
-
 Game.prototype.play = function() {
 
 
-  process.stdout.write(this.turn[1]);
+  // process.stdout.write(this.turn[1]);
 
 }
 
-Game.prototype.takeTurn = function() {
-  // the player whose turn it is
-  // places a piece where there is a blank space
+Game.prototype.turn = function() {
+  // print the board
+  this.printBoard();
+
+  // prompt the current player for a move
+
+  rl.question(`${this.currentTurn[0]}, your turn: (choose [x, y]):`, answer => {
+
+    console.log(answer);
+
+  });
+
+  // player places a piece where there is a blank space
 
   // check for a win
     // if so, print board
@@ -63,16 +84,20 @@ Game.prototype.takeTurn = function() {
 
   // change whose turn it is
 
-  // print board
-  // printBoard();
 
-  // call take turn for now current player.
+  // call turn for now current player.
+
+}
+
+Game.prototype.init = function() {
+  // start it off.
+  this.turn();
 
 }
 
 var game = new Game();
 
-game.play();
+game.init();
 
 
 
