@@ -1,9 +1,9 @@
 const readline = require('readline');
 
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+// var rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout
+// });
 
 
 
@@ -73,39 +73,68 @@ Game.prototype.play = function(coords) {
 Game.prototype.getUserMove = function() {
 
   var messages = {
-    'notArray': 'please make your selection as coordinates in an array. For example: [1, 2]',
-    'spaceNotValid': 'chosen space not valid, please choose again'
+    'default': `${this.currentTurn[0]}, your turn: (choose [x, y]):`,
+    'input invalid': 'input invalid. use x/y coordinates 1-3, for example 12 or 1,2: ',
+    'spaceNotValid': 'chosen space not valid, please choose again: '
   }
 
-  this.thisQuestion = readline.createInterface({
+  var thisQuestion = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
 
-  // console.log(this.thisQuestion)
+  var answerCallback = function(answer) {
+    // console.log(typeof answer);
+    // answer = answer * 1
+    // console.log(typeof answer * 1);
+    // var
 
-  this.thisQuestion.question(`${this.currentTurn[0]}, your turn: (choose [x, y]):`, answer => {
-    if (!Array.isArray(answer)) {
+    // remove commas if any
 
-      this.thisQuestion.close();
-
-      this.thisQuestion.question(messages['notArray'], answer => {
-
-        process.stdout.write(answer);
+    if (answer.length > 3 || answer.length < 2
+      || (answer.length === 3 && answer[1] !== ',')) {
+      return question(messages['input invalid'], answer => {
+        answerCallback(answer);
       });
+    } else if (answer.length === 3){
+      // var coordinates = []
+      answer = answer.split(',');
+      // console.log(answer);
+    } else {
+      answer = answer.split('');
     }
 
-  })
+    answer = answer.map(coord => {
+      return coord = Number.parseInt(coord)
+    })
 
 
-  // rl.question(`${this.currentTurn[0]}, your turn: (choose [x, y]):`, answer => {
+    for (var i = 0; i < answer.length; i++) {
+      // console.log('Number.isInteger(answer[i])', Number.isInteger(answer[i]))
+      if (!Number.isInteger(answer[i]) || answer[i] > 3 || answer[i] < 1) {
+        return question(messages['input invalid'], answer => {
+          answerCallback(answer);
+        });
+      }
+    }
 
-  //   // this.play(answer);
+    // here we should have valid coordinates
 
-  //
+    // now translate the coordinates and check if the place is available
 
-  // });
 
+    console.log(answer)
+  }
+
+  var question = function(message, cb) {
+    // thisQuestion.close();
+    thisQuestion.question(message, function(answer) {
+      cb(answer);
+    });
+
+  }
+
+  question(messages.default, answerCallback);
 }
 
 
